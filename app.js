@@ -4,8 +4,8 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 
 const {
-  NOT_FOUND_CODE_STATUS,
-  DEFAULT_CODE_STATUS,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
@@ -26,16 +26,16 @@ app.use((req, res, next) => {
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 app.use('*', (req, res) => {
-  res.status(NOT_FOUND_CODE_STATUS).send({
+  res.status(NOT_FOUND).send({
     message: 'Несуществующий маршрут',
   });
 });
 
 app.use((err, req, res) => {
   const { statusCode, message } = err;
-  if (statusCode === DEFAULT_CODE_STATUS) {
+  if (statusCode === INTERNAL_SERVER_ERROR) {
     return res.send({
-      message: 'На сервере произошла ошибка',
+      message: 'Внутренняя ошибка сервера',
     });
   }
   return message;

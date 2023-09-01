@@ -1,10 +1,10 @@
 const User = require('../models/user');
 
 const {
-  NOT_FOUND_CODE_STATUS,
-  VALIDATION_CODE_STATUS,
-  CREATED_CODE_STATUS,
-  DEFAULT_CODE_STATUS,
+  CREATED,
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
 } = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
@@ -16,7 +16,7 @@ const getUsers = (req, res, next) => {
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      res.status(NOT_FOUND_CODE_STATUS).send({
+      res.status(NOT_FOUND).send({
         message: 'Пользователь не найден',
       });
     })
@@ -25,12 +25,12 @@ const getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(VALIDATION_CODE_STATUS).send({
+        res.status(BAD_REQUEST).send({
           message: 'Передан некорректный идентификатор пользователя',
         });
       } else {
-        res.status(DEFAULT_CODE_STATUS).send({
-          message: 'На сервере произошла ошибка',
+        res.status(INTERNAL_SERVER_ERROR).send({
+          message: 'Внутренняя ошибка сервера',
         });
       }
       next();
@@ -40,17 +40,17 @@ const getUserById = (req, res, next) => {
 const createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED_CODE_STATUS).send({
+    .then((user) => res.status(CREATED).send({
       data: user,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(VALIDATION_CODE_STATUS).send({
+        res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные пользователя',
         });
       } else {
-        res.status(DEFAULT_CODE_STATUS).send({
-          message: 'На сервере произошла ошибка',
+        res.status(INTERNAL_SERVER_ERROR).send({
+          message: 'Внутренняя ошибка сервера',
         });
       }
       next();
@@ -59,13 +59,13 @@ const createUser = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(
+  User.findAndUpdate(
     req.user._id,
     { name, about },
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      res.status(NOT_FOUND_CODE_STATUS).send({
+      res.status(NOT_FOUND).send({
         message: 'Пользователь не найден',
       });
     })
@@ -74,12 +74,12 @@ const updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(VALIDATION_CODE_STATUS).send({
+        res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные пользователя',
         });
       } else {
-        res.status(DEFAULT_CODE_STATUS).send({
-          message: 'На сервере произошла ошибка',
+        res.status(INTERNAL_SERVER_ERROR).send({
+          message: 'Внутренняя ошибка сервера',
         });
       }
       next();
@@ -88,13 +88,13 @@ const updateUser = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(
+  User.findAndUpdate(
     req.user._id,
     { avatar },
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      res.status(NOT_FOUND_CODE_STATUS).send({
+      res.status(NOT_FOUND).send({
         message: 'Пользователь не найден',
       });
     })
@@ -103,12 +103,12 @@ const updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(VALIDATION_CODE_STATUS).send({
+        res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные пользователя',
         });
       }
-      res.status(DEFAULT_CODE_STATUS).send({
-        message: 'На сервере произошла ошибка',
+      res.status(INTERNAL_SERVER_ERROR).send({
+        message: 'Внутренняя ошибка сервера',
       });
       next();
     });
