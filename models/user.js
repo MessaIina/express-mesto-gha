@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema(
     about: {
       type: String,
       required: [true, 'Поле "Обо мне" должно быть заполнено'],
-      minlength: [2, 'Минимальная длина поля "Обо мне" - 2 символа'],
-      maxlength: [30, 'Максимальная длина поля "Обо мне" - 30 символов'],
+      minlength: [2, 'Минимальная длина поля "Обо мне" - 2'],
+      maxlength: [30, 'Максимальная длина поля "Обо мне" - 30'],
     },
     avatar: {
       type: String,
