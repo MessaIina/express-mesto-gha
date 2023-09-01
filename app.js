@@ -21,11 +21,20 @@ app.use((req, res, next) => {
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
-app.use((err, req, res) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+app.use('*', (req, res) => {
+  res.status(404).send({
+    message: 'Несуществующий маршрут',
   });
+});
+
+app.use((err, req, res) => {
+  const { statusCode, message } = err;
+  if (statusCode === 500) {
+    return res.send({
+      message: 'На сервере произошла ошибка',
+    });
+  }
+  return message;
 });
 
 app.listen(PORT);

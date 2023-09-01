@@ -1,14 +1,12 @@
-const express = require('express');
+const router = require('express').Router();
+const {
+  getCards,
+  createCard,
+  deleteCard,
+} = require('../controllers/cards');
 
-const router = express.Router();
-
-// eslint-disable-next-line import/extensions
-const cardController = require('./controllers/cards');
-
-router.get('/cards', cardController.getCards);
-
-router.post('/cards', cardController.createCard);
-
-router.delete('/cards/:cardId', cardController.deleteCard);
+router.get('/', getCards);
+router.post('/', createCard);
+router.delete('/:cardId', deleteCard);
 
 module.exports = router;
