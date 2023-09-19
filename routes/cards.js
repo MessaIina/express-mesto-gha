@@ -1,15 +1,16 @@
-const router = require('express').Router();
+const router = require('express').Router(); // создали роутер
 const { celebrate, Joi } = require('celebrate');
 const { REG_EXP_LINK } = require('../utils/constants');
 const {
-  getCards,
+  getAllCards,
   createCard,
   deleteCard,
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
 
-router.get('/', getCards);
+router.get('/', getAllCards);
+
 router.post(
   '/',
   celebrate({
@@ -20,6 +21,7 @@ router.post(
   }),
   createCard,
 );
+
 router.delete(
   '/:cardId',
   celebrate({
@@ -29,6 +31,7 @@ router.delete(
   }),
   deleteCard,
 );
+
 router.put(
   '/:cardId/likes',
   celebrate({
@@ -38,6 +41,7 @@ router.put(
   }),
   likeCard,
 );
+
 router.delete(
   '/:cardId/likes',
   celebrate({
