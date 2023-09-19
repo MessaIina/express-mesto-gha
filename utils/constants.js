@@ -8,6 +8,9 @@ const INTERNAL_SERVER_ERROR = 500;
 
 const SECRET_KEY = 'my-secret-key';
 
+const REG_EXP_LINK = /https?:\/\/(www\.)?[\w\-._~:/?#[\]@!\\$&'()\\*+,;=]+#?/;
+const REG_EXP_EMAIL = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+
 module.exports = {
   OK,
   CREATED,
@@ -17,4 +20,6 @@ module.exports = {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   SECRET_KEY,
+  REG_EXP_LINK,
+  REG_EXP_EMAIL,
 };
