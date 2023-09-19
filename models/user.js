@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema(
         validator: (v) => REG_EXP_LINK.test(v),
         message: 'Некорректная ссылка',
       },
-      required: [true, 'Поле "Аватар" должно быть заполнено'],
     },
     email: {
       type: String,
