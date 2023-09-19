@@ -3,13 +3,17 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
+const { celebrate, Joi } = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 
 const auth = require('./middlewares/auth');
 
 const {
+  REG_EXP_LINK,
+  REG_EXP_EMAIL,
   INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
 
@@ -21,6 +25,30 @@ mongoose.connect(DB_URL);
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().pattern(REG_EXP_LINK),
+      email: Joi.string().required().pattern(REG_EXP_EMAIL),
+      password: Joi.string().required().min(6),
+    }),
+  }),
+  createUser,
+);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().pattern(REG_EXP_EMAIL),
+      password: Joi.string().required().min(6),
+    }),
+  }),
+  login,
+);
 
 app.use('/users', auth, userRouter);
 app.use('/cards', auth, cardRouter);
