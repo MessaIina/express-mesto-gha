@@ -10,7 +10,6 @@ const {
 } = require('../controllers/cards');
 
 router.get('/', getCards);
-
 router.post(
   '/',
   celebrate({
@@ -21,7 +20,6 @@ router.post(
   }),
   createCard,
 );
-
 router.delete(
   '/:cardId',
   celebrate({
@@ -31,7 +29,6 @@ router.delete(
   }),
   deleteCard,
 );
-
 router.put(
   '/:cardId/likes',
   celebrate({
@@ -41,7 +38,6 @@ router.put(
   }),
   likeCard,
 );
-
 router.delete(
   '/:cardId/likes',
   celebrate({
