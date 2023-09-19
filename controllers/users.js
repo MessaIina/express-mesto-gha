@@ -1,11 +1,25 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const ValidationError = require('../errors/validation-error');
+const ConflictError = require('../errors/conflict-error');
+const NotFoundError = require('../errors/not-found-error');
 
 const {
   CREATED,
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
+  SECRET_KEY,
 } = require('../utils/constants');
+
+const { JWT_SECRET = SECRET_KEY } = process.env;
+
+const getProfileUser = (req, res, next) => {
+  User.findOne({ _id: req.user._id })
+    .orFail(new NotFoundError('Пользователь не найден'))
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(next);
+};
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -15,45 +29,49 @@ const getUsers = (req, res, next) => {
 
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      res.status(NOT_FOUND).send({
-        message: 'Пользователь не найден',
-      });
-    })
+    .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({
-          message: 'Передан некорректный идентификатор пользователя',
-        });
+        next(
+          new ValidationError('Передан некорректный идентификатор пользователя'),
+        );
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({
-          message: 'Внутренняя ошибка сервера',
-        });
+        next(err);
       }
-      next();
     });
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
     .then((user) => res.status(CREATED).send({
-      data: user,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+      _id: user._id,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные пользователя',
-        });
+        next(new ValidationError('Переданы некорректные данные пользователя'));
+      } else if (err.code === 11000) {
+        next(new ConflictError('Данный email уже занят'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({
-          message: 'Внутренняя ошибка сервера',
-        });
+        next(err);
       }
-      next();
     });
 };
 
@@ -64,25 +82,16 @@ const updateUser = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      res.status(NOT_FOUND).send({
-        message: 'Пользователь не найден',
-      });
-    })
+    .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные пользователя',
-        });
+        next(new ValidationError('Переданы некорректные данные пользователя'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({
-          message: 'Внутренняя ошибка сервера',
-        });
+        next(err);
       }
-      next();
     });
 };
 
@@ -93,31 +102,47 @@ const updateAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      res.status(NOT_FOUND).send({
-        message: 'Пользователь не найден',
-      });
-    })
+    .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({
-          message: 'Переданы некорректные данные пользователя',
-        });
+        next(new ValidationError('Переданы некорректные данные пользователя'));
+      } else {
+        next(err);
       }
-      res.status(INTERNAL_SERVER_ERROR).send({
-        message: 'Внутренняя ошибка сервера',
-      });
-      next();
     });
+};
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+        })
+        .send({
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        });
+    })
+    .catch(next);
 };
 
 module.exports = {
+  getProfileUser,
   getUsers,
   getUserById,
   createUser,
   updateUser,
   updateAvatar,
+  login,
 };

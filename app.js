@@ -1,10 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const NotFoundError = require('./errors/not-found-error');
+
+const auth = require('./middlewares/auth');
 
 const {
-  NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
 
@@ -15,30 +18,23 @@ app.use(express.json());
 
 mongoose.connect(DB_URL);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64f16fcb5a94cd966d90295c',
-  };
+app.use('/users', auth, userRouter);
+app.use('/cards', auth, cardRouter);
 
-  next();
+app.use('*', auth, (req, res, next) => {
+  next(new NotFoundError('Несуществующий маршрут'));
 });
 
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
-app.use('*', (req, res) => {
-  res.status(NOT_FOUND).send({
-    message: 'Несуществующий маршрут',
+app.use(errors());
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = INTERNAL_SERVER_ERROR, message } = err;
+  res.status(statusCode).send({
+    message:
+      statusCode === INTERNAL_SERVER_ERROR
+        ? 'На сервере произошла ошибка'
+        : message,
   });
-});
-
-app.use((err, req, res) => {
-  const { statusCode, message } = err;
-  if (statusCode === INTERNAL_SERVER_ERROR) {
-    return res.send({
-      message: 'Внутренняя ошибка сервера',
-    });
-  }
-  return message;
 });
 
 app.listen(PORT);
