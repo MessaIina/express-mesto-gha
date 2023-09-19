@@ -1,15 +1,15 @@
-const router = require('express').Router(); // создали роутер
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { REG_EXP_LINK } = require('../utils/constants');
 const {
-  getAllCards,
+  getCards,
   createCard,
   deleteCard,
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
 
-router.get('/', getAllCards);
+router.get('/', getCards);
 
 router.post(
   '/',

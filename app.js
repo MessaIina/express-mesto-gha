@@ -58,8 +58,7 @@ app.use('*', auth, (req, res, next) => {
 });
 
 app.use(errors());
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { statusCode = INTERNAL_SERVER_ERROR, message } = err;
   res.status(statusCode).send({
     message:
