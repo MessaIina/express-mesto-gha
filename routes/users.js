@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { REG_EXP_LINK } = require('../utils/constants');
+const { REG_EXP_EMAIL, REG_EXP_LINK } = require('../utils/constants');
 const {
   getProfileUser,
   getUsers,
@@ -41,7 +41,28 @@ router.patch(
   }),
   updateAvatar,
 );
-router.post('/signin', login);
-router.post('/signup', createUser);
+router.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().pattern(REG_EXP_LINK),
+      email: Joi.string().required().pattern(REG_EXP_EMAIL),
+      password: Joi.string().required().min(6),
+    }),
+  }),
+  createUser,
+);
+router.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().pattern(REG_EXP_EMAIL),
+      password: Joi.string().required().min(6),
+    }),
+  }),
+  login,
+);
 
 module.exports = router;
