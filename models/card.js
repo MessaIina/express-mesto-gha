@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+const { REG_EXP_LINK } = require('../utils/constants');
 
 const cardSchema = new mongoose.Schema(
   {
@@ -12,7 +12,7 @@ const cardSchema = new mongoose.Schema(
     link: {
       type: String,
       validate: {
-        validator: (v) => validator.isURL(v),
+        validator: (v) => REG_EXP_LINK.test(v),
         message: 'Некорректная ссылка',
       },
       required: [true, 'Поле "Ссылка" должно быть заполнено'],

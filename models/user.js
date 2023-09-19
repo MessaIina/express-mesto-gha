@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const { REG_EXP_EMAIL, REG_EXP_LINK } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema(
   {
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       default:
         'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
       validate: {
-        validator: (v) => validator.isURL(v),
+        validator: (v) => REG_EXP_LINK.test(v),
         message: 'Некорректная ссылка',
       },
       required: [true, 'Поле "Аватар" должно быть заполнено'],
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       validate: {
-        validator: (v) => validator.email(v),
+        validator: (v) => REG_EXP_EMAIL.test(v),
         message: 'Некорректная почта',
       },
       unique: true,
@@ -58,7 +58,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
         if (!matched) {
           throw new UnauthorizedError('Неправильные почта или пароль');
         }
-        return user; // теперь user доступен
+        return user;
       });
     });
 };
