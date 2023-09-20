@@ -22,7 +22,7 @@ const app = express();
 mongoose.connect(DB_URL);
 
 app.use(cookieParser());
-express.json();
+app.use(express.json());
 
 app.post(
   '/signup',
