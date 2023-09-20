@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
 const userRouter = require('./routes/users');
@@ -23,8 +22,7 @@ const app = express();
 mongoose.connect(DB_URL);
 
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+express.json();
 
 app.post(
   '/signup',

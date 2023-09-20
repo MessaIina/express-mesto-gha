@@ -80,7 +80,7 @@ const updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
@@ -100,7 +100,7 @@ const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
