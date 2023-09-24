@@ -56,7 +56,6 @@ app.post(
   login,
 );
 
-app.use(express.static('public'));
 app.use('/users', auth, userRouter);
 app.use('/cards', auth, cardRouter);
 
