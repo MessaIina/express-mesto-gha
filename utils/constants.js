@@ -11,6 +11,14 @@ const SECRET_KEY = 'my-secret-key';
 const REG_EXP_LINK = /https?:\/\/(www\.)?[\w\-._~:/?#[\]@!\\$&'()\\*+,;=]+#?/;
 const REG_EXP_EMAIL = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
+const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+
+// Массив доменов, с которых разрешены кросс-доменные запросы
+const ALOWED_CORS = [
+  'http://rocket.mesto.nomoredomainsicu.ru',
+  'https://rocket.mesto.nomoredomainsicu.ru',
+];
+
 module.exports = {
   OK,
   CREATED,
@@ -22,4 +30,6 @@ module.exports = {
   SECRET_KEY,
   REG_EXP_LINK,
   REG_EXP_EMAIL,
+  ALOWED_CORS,
+  DEFAULT_ALLOWED_METHODS,
 };

@@ -9,6 +9,7 @@ const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 
 const auth = require('./middlewares/auth');
+const cors = require('./middlewares/cors');
 
 const {
   REG_EXP_LINK,
@@ -23,6 +24,7 @@ mongoose.connect(DB_URL);
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors);
 
 app.post(
   '/signup',
