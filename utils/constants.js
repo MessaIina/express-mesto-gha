@@ -15,8 +15,9 @@ const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const ALOWED_CORS = [
-  'http://rocket.mesto.nomoredomainsicu.ru',
-  'https://rocket.mesto.nomoredomainsicu.ru',
+  'https://praktikum.tk',
+  'http://praktikum.tk',
+  'localhost:3000',
 ];
 
 module.exports = {
