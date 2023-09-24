@@ -9,7 +9,6 @@ const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 
 const auth = require('./middlewares/auth');
-const cors = require('./middlewares/cors');
 
 const {
   REG_EXP_LINK,
@@ -24,7 +23,34 @@ mongoose.connect(DB_URL);
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors);
+
+app.options('*', (req, res) => {
+  const { origin } = req.headers;
+
+  // eslint-disable-next-line no-undef
+  if (allowedCors.includes(origin)) {
+    // Устанавливаем заголовки для предварительного запроса
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.status(200).send();
+  } else {
+    res.status(403).send('Access forbidden'); // Если источник не разрешен, возвращаем ошибку доступа
+  }
+});
+
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+
+  // eslint-disable-next-line no-undef
+  if (allowedCors.includes(origin)) {
+    // Устанавливаем заголовок для основного запроса
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  // Продолжаем обработку запроса
+  next();
+});
 
 app.get('/crash-test', () => {
   setTimeout(() => {
