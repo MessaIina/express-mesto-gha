@@ -16,41 +16,16 @@ const {
   INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
 
-const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
+const {
+  PORT = 3000,
+  DB_URL = 'mongodb://127.0.0.1:27017/mestodb',
+} = process.env;
 const app = express();
 
 mongoose.connect(DB_URL);
 
 app.use(cookieParser());
 app.use(express.json());
-
-app.options('*', (req, res) => {
-  const { origin } = req.headers;
-
-  // eslint-disable-next-line no-undef
-  if (allowedCors.includes(origin)) {
-    // Устанавливаем заголовки для предварительного запроса
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.status(200).send();
-  } else {
-    res.status(403).send('Access forbidden'); // Если источник не разрешен, возвращаем ошибку доступа
-  }
-});
-
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-
-  // eslint-disable-next-line no-undef
-  if (allowedCors.includes(origin)) {
-    // Устанавливаем заголовок для основного запроса
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-
-  // Продолжаем обработку запроса
-  next();
-});
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -82,8 +57,62 @@ app.post(
   login,
 );
 
-app.use('/users', auth, userRouter);
-app.use('/cards', auth, cardRouter);
+app.use(
+  '/users',
+  (req, res, next) => {
+    const { method, headers } = req;
+    const requestedOrigin = headers.origin;
+    const allowedOrigin = [
+      'https://praktikum.tk',
+      'http://praktikum.tk',
+      'http://localhost:3000',
+      'https://localhost:3000',
+    ];
+    const allowedMethods = 'GET,POST,PUT,DELETE';
+    const allowedHeaders = 'Content-Type,Authorization';
+
+    if (method === 'OPTIONS') {
+      if (allowedOrigin.includes(requestedOrigin)) {
+        res.setHeader('Access-Control-Allow-Origin', requestedOrigin);
+        res.setHeader('Access-Control-Allow-Methods', allowedMethods);
+        res.setHeader('Access-Control-Allow-Headers', allowedHeaders);
+      }
+      res.sendStatus(200);
+    } else {
+      next();
+    }
+  },
+  auth,
+  userRouter,
+);
+app.use(
+  '/cards',
+  (req, res, next) => {
+    const { method, headers } = req;
+    const requestedOrigin = headers.origin;
+    const allowedOrigin = [
+      'https://praktikum.tk',
+      'http://praktikum.tk',
+      'http://localhost:3000',
+      'https://localhost:3000',
+    ];
+    const allowedMethods = 'GET,POST,PUT,DELETE';
+    const allowedHeaders = 'Content-Type,Authorization';
+
+    if (method === 'OPTIONS') {
+      if (allowedOrigin.includes(requestedOrigin)) {
+        res.setHeader('Access-Control-Allow-Origin', requestedOrigin);
+        res.setHeader('Access-Control-Allow-Methods', allowedMethods);
+        res.setHeader('Access-Control-Allow-Headers', allowedHeaders);
+      }
+      res.sendStatus(200);
+    } else {
+      next();
+    }
+  },
+  auth,
+  cardRouter,
+);
 
 app.use('*', auth, (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));
