@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
 
-app.use(cors);
+app.use(cors());
 
 app.post(
   '/signup',
