@@ -26,7 +26,11 @@ mongoose.connect(DB_URL);
 app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
-app.use(cors());
+
+const corsOptions = {
+  origin: 'https://mesto.msl.nomoredomainsrocks.ru',
+};
+app.use(cors(corsOptions));
 
 app.post(
   '/signup',
@@ -62,6 +66,7 @@ app.use('*', auth, (req, res, next) => {
 app.use(errorLogger);
 
 app.use(errors());
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = INTERNAL_SERVER_ERROR, message } = err;
