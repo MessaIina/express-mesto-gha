@@ -7,8 +7,6 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
-// eslint-disable-next-line no-unused-expressions
-require('dotenv').config;
 
 const { auth } = require('./middlewares/auth');
 const cors = require('./middlewares/cors');
@@ -29,6 +27,12 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
 app.use(cors);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post(
   '/signup',
