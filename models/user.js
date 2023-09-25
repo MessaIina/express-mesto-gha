@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const UnauthorizedError = require('../errors/unauthorized-error');
-const { REG_EXP_LINK } = require('../utils/constants');
+const { REG_EXP_EMAIL, REG_EXP_LINK } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema(
   {
@@ -23,16 +22,14 @@ const userSchema = new mongoose.Schema(
       default:
         'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
       validate: {
-        validator(v) {
-          return REG_EXP_LINK.test(v);
-        },
+        validator: (v) => REG_EXP_LINK.test(v),
         message: 'Некорректная ссылка',
       },
     },
     email: {
       type: String,
       validate: {
-        validator: (v) => validator.isEmail(v),
+        validator: (v) => REG_EXP_EMAIL.test(v),
         message: 'Некорректная почта',
       },
       unique: true,

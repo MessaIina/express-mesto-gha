@@ -8,31 +8,21 @@ const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 
-const { auth } = require('./middlewares/auth');
-const cors = require('./middlewares/cors');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
+const auth = require('./middlewares/auth');
 
 const {
   REG_EXP_LINK,
+  REG_EXP_EMAIL,
   INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
-
 const app = express();
 
 mongoose.connect(DB_URL);
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(requestLogger);
-app.use(cors);
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
 
 app.post(
   '/signup',
@@ -41,7 +31,7 @@ app.post(
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(REG_EXP_LINK),
-      email: Joi.string().required().email().min(2),
+      email: Joi.string().required().pattern(REG_EXP_EMAIL),
       password: Joi.string().required().min(6),
     }),
   }),
@@ -51,30 +41,23 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().email().min(2),
+      email: Joi.string().required().pattern(REG_EXP_EMAIL),
       password: Joi.string().required().min(6),
     }),
   }),
   login,
 );
 
-app.post('/signout', (req, res) => {
-  res.send({ message: 'Вы вышли со страницы' });
-});
+app.use('/users', auth, userRouter);
+app.use('/cards', auth, cardRouter);
 
-app.use(auth);
-app.use(cardRouter);
-app.use(userRouter);
-
-app.use('*', (req, res, next) => {
+app.use('*', auth, (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));
 });
 
-app.use(errorLogger);
-
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { statusCode = INTERNAL_SERVER_ERROR, message } = err;
   res.status(statusCode).send({
     message:
