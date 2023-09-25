@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
-const cors = require('cors');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { login, createUser } = require('./controllers/users').default;
+const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 
 const auth = require('./middlewares/auth');
+const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const {
@@ -26,8 +26,7 @@ mongoose.connect(DB_URL);
 app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
-
-app.use(cors());
+app.use(cors);
 
 app.post(
   '/signup',
