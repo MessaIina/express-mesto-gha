@@ -8,8 +8,6 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
-const { PORT = 3000 } = require('./utils/app.config');
-const { DB_URL } = require('./utils/constants');
 
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -18,6 +16,8 @@ const {
   REG_EXP_LINK,
   INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
+
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
 
@@ -57,9 +57,8 @@ app.post('/signout', (req, res) => {
   res.send({ message: 'Вы вышли со страницы' });
 });
 
-app.use(auth);
-app.use(userRouter);
-app.use(cardRouter);
+app.use(auth, userRouter);
+app.use(auth, cardRouter);
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));
