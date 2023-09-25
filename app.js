@@ -7,9 +7,10 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
+// eslint-disable-next-line no-unused-expressions
 require('dotenv').config;
 
-const auth = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -57,8 +58,9 @@ app.post('/signout', (req, res) => {
   res.send({ message: 'Вы вышли со страницы' });
 });
 
-app.use(auth, userRouter);
-app.use(auth, cardRouter);
+app.use(auth);
+app.use(cardRouter);
+app.use(userRouter);
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));

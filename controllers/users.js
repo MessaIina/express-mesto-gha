@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+require('dotenv').config;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
