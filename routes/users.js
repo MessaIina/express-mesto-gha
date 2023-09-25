@@ -9,12 +9,12 @@ const {
   getProfileUser,
 } = require('../controllers/users');
 
-router.get('/', getUsers);
+router.get('/users', getUsers);
 
-router.get('/me', getProfileUser);
+router.get('/users/me', getProfileUser);
 
 router.patch(
-  '/me',
+  '/users/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
@@ -25,7 +25,7 @@ router.patch(
 );
 
 router.patch(
-  '/me/avatar',
+  '/users/me/avatar',
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string().required().pattern(REG_EXP_LINK),
@@ -35,7 +35,7 @@ router.patch(
 );
 
 router.get(
-  '/:userId',
+  '/users/:userId',
   celebrate({
     params: Joi.object().keys({
       userId: Joi.string().length(24).hex().required(),

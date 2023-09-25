@@ -58,9 +58,9 @@ app.post('/signout', (req, res) => {
   res.send({ message: 'Вы вышли со страницы' });
 });
 
-// app.use(auth);
-app.use('/users', auth, userRouter);
-app.use('/cards', auth, cardRouter);
+app.use(auth);
+app.use(userRouter);
+app.use(cardRouter);
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));
