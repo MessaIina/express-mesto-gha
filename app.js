@@ -6,7 +6,7 @@ const { celebrate, Joi } = require('celebrate');
 const cors = require('cors');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { login, createUser } = require('./controllers/users');
+const { login, createUser } = require('./controllers/users').default;
 const NotFoundError = require('./errors/not-found-error');
 
 const auth = require('./middlewares/auth');
