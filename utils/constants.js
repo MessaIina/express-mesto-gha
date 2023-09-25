@@ -19,6 +19,9 @@ const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 const ALOWED_CORS = [
   'http://mesto.msl.nomoredomainsrocks.ru',
   'https://mesto.msl.nomoredomainsrocks.ru',
+  'https://praktikum.tk',
+  'http://praktikum.tk',
+  'localhost:3000',
 ];
 
 module.exports = {
