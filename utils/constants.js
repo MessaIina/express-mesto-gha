@@ -8,6 +8,8 @@ const INTERNAL_SERVER_ERROR = 500;
 
 const SECRET_KEY = 'my-secret-key';
 
+const DB_URL = 'mongodb://127.0.0.1/mestodb';
+
 const REG_EXP_LINK = /https?:\/\/(www\.)?[\w\-._~:/?#[\]@!\\$&'()\\*+,;=]+#?/;
 const REG_EXP_EMAIL = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
@@ -32,4 +34,5 @@ module.exports = {
   REG_EXP_EMAIL,
   DEFAULT_ALLOWED_METHODS,
   ALOWED_CORS,
+  DB_URL,
 };
