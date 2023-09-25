@@ -11,17 +11,13 @@ const SECRET_KEY = 'my-secret-key';
 const REG_EXP_LINK = /https?:\/\/(www\.)?[\w\-._~:/?#[\]@!\\$&'()\\*+,;=]+#?/;
 const REG_EXP_EMAIL = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
-const ALLOWEDORIGIN = [
-  'https://praktikum.tk',
-  'http://praktikum.tk',
-  'http://localhost:3000',
-  'https://localhost:3000',
+const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+
+// Массив доменов, с которых разрешены кросс-доменные запросы
+const ALOWED_CORS = [
   'http://mesto.msl.nomoredomainsrocks.ru',
   'https://mesto.msl.nomoredomainsrocks.ru',
 ];
-
-const ALLOWEDMETHODS = 'GET,POST,PUT,DELETE';
-const ALLOWEDHEADERS = 'Content-Type,Authorization';
 
 module.exports = {
   OK,
@@ -34,7 +30,6 @@ module.exports = {
   SECRET_KEY,
   REG_EXP_LINK,
   REG_EXP_EMAIL,
-  ALLOWEDORIGIN,
-  ALLOWEDMETHODS,
-  ALLOWEDHEADERS,
+  DEFAULT_ALLOWED_METHODS,
+  ALOWED_CORS,
 };
