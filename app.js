@@ -26,6 +26,7 @@ mongoose.connect(DB_URL);
 app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
+app.use(cors);
 
 app.post(
   '/signup',
@@ -51,8 +52,8 @@ app.post(
   login,
 );
 
-app.use('/users', cors, auth, userRouter);
-app.use('/cards', cors, auth, cardRouter);
+app.use('/users', auth, userRouter);
+app.use('/cards', auth, cardRouter);
 
 app.use('*', auth, (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));
