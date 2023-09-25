@@ -7,8 +7,6 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
-const { DB_URL } = require('./utils/constants');
-const { PORT = 3000 } = require('./utils/app.config');
 
 const auth = require('./middlewares/auth');
 const cors = require('./middlewares/cors');
@@ -21,6 +19,8 @@ const {
 } = require('./utils/constants');
 
 const app = express();
+
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 mongoose.connect(DB_URL);
 
