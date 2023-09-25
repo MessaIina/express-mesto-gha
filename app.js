@@ -16,7 +16,6 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const {
   REG_EXP_LINK,
-  REG_EXP_EMAIL,
   INTERNAL_SERVER_ERROR,
 } = require('./utils/constants');
 
@@ -37,7 +36,7 @@ app.post(
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(REG_EXP_LINK),
-      email: Joi.string().required().pattern(REG_EXP_EMAIL),
+      email: Joi.string().required().email().min(2),
       password: Joi.string().required().min(6),
     }),
   }),
@@ -47,7 +46,7 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().pattern(REG_EXP_EMAIL),
+      email: Joi.string().required().email().min(2),
       password: Joi.string().required().min(6),
     }),
   }),
@@ -70,7 +69,7 @@ app.use(errorLogger);
 
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { statusCode = INTERNAL_SERVER_ERROR, message } = err;
   res.status(statusCode).send({
     message:
