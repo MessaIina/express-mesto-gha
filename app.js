@@ -7,6 +7,7 @@ const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
+require('dotenv').config;
 
 const auth = require('./middlewares/auth');
 const cors = require('./middlewares/cors');
