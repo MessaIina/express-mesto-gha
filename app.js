@@ -58,12 +58,13 @@ app.post('/signout', (req, res) => {
   res.send({ message: 'Вы вышли со страницы' });
 });
 
-app.use('/users', auth, userRouter);
-app.use('/cards', auth, cardRouter);
-
-app.use('*', auth, (req, res, next) => {
+app.use('*', (req, res, next) => {
   next(new NotFoundError('Несуществующий маршрут'));
 });
+
+app.use(auth);
+app.use('/users', userRouter);
+app.use('/cards', cardRouter);
 
 app.use(errorLogger);
 
