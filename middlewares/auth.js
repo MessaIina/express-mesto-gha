@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(
       token,
-      NODE_ENV === 'production' ? JWT_SECRET : 'my-secret-key',
+      NODE_ENV === 'production' ? JWT_SECRET : 'h7G6tVv2$13gfasd$',
     );
   } catch (err) {
     next(new UnauthorizedError('Неверный логин и/или пароль'));
