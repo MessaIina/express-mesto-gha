@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 const UnauthorizedError = require('../errors/unauthorized-error');
-const { REG_EXP_EMAIL, REG_EXP_LINK } = require('../utils/constants');
+const { REG_EXP_LINK } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,8 +30,8 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       validate: {
-        validator: (v) => REG_EXP_EMAIL.test(v),
-        message: 'Некорректная почта',
+        validator: (v) => validator.isEmail(v),
+        message: 'Некорректный URL',
       },
       unique: true,
       required: [true, 'Поле "Почта" должно быть заполнено'],
