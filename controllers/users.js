@@ -4,13 +4,14 @@ const User = require('../models/user');
 const ValidationError = require('../errors/validation-error');
 const ConflictError = require('../errors/conflict-error');
 const NotFoundError = require('../errors/not-found-error');
+// eslint-disable-next-line no-unused-expressions
+require('dotenv').config;
 
 const {
   CREATED,
-  SECRET_KEY,
 } = require('../utils/constants');
 
-const { JWT_SECRET = SECRET_KEY } = process.env;
+const { JWT_SECRET = 'my-secret-key' } = process.env;
 
 const getProfileUser = (req, res, next) => {
   User.findOne({ _id: req.user._id })
@@ -118,9 +119,13 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        {
+          expiresIn: '7d',
+        },
+      );
       res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
