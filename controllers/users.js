@@ -4,14 +4,10 @@ const User = require('../models/user');
 const ValidationError = require('../errors/validation-error');
 const ConflictError = require('../errors/conflict-error');
 const NotFoundError = require('../errors/not-found-error');
-// eslint-disable-next-line no-unused-expressions
-require('dotenv').config;
-
+const { NODE_ENV, JWT_SECRET } = require('../utils/app.config');
 const {
   CREATED,
 } = require('../utils/constants');
-
-const { JWT_SECRET = 'my-secret-key' } = process.env;
 
 const getProfileUser = (req, res, next) => {
   User.findById(req.user._id)
@@ -121,7 +117,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        JWT_SECRET,
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         {
           expiresIn: '7d',
         },
