@@ -14,7 +14,7 @@ const {
 const { JWT_SECRET = 'my-secret-key' } = process.env;
 
 const getProfileUser = (req, res, next) => {
-  User.findOne({ _id: req.user._id })
+  User.findById(req.user._id)
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
       res.send(user);
@@ -127,16 +127,13 @@ const login = (req, res, next) => {
         },
       );
       res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
         .send({
           name: user.name,
           about: user.about,
           avatar: user.avatar,
           email: user.email,
           _id: user._id,
+          token,
         });
     })
     .catch(next);
