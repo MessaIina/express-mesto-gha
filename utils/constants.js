@@ -14,6 +14,7 @@ const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const ALOWED_CORS = [
   'https://mesto.msl.nomoredomainsrocks.ru',
+  'http://mesto.msl.nomoredomainsrocks.ru',
 ];
 
 module.exports = {
